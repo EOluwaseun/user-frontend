@@ -1,0 +1,261 @@
+import React, { useState } from 'react';
+import BreadCrum from '../Component/BreadCrum';
+import Meta from '../Component/Meta';
+import ReactStars from 'react-rating-stars-component';
+import famous from '../assets/images/famous.jpg';
+import { FaHamburger, FaHamsa } from 'react-icons/fa';
+import ProductCard from '../Component/ProductCard';
+import Color from '../Component/Color';
+
+function OurStore() {
+  const [grid, setGrid] = useState(4);
+  // alert(grid);
+  return (
+    <>
+      <Meta title="Our Store" />
+      <BreadCrum title="Our Store" />
+      <div className="store-wrapper py-4 ">
+        <div className="container">
+          <div className="flex gap-4">
+            <div className="flex items-center">
+              <div className="grid grid-row-4 gap-4">
+                <div className="filter-card mb-3">
+                  <h3 className="filter-title">Shop By Category</h3>
+                  <div>
+                    <ul>
+                      <li>Watch</li>
+                      <li>Tv</li>
+                      <li>Camera</li>
+                      <li>Laptop</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="filter-card mb-3">
+                  <h3 className="filter-title">Filter By</h3>
+                  <div>
+                    <h5 className="subtitle">Availability</h5>
+                    <div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id=""
+                        />
+                        <label className="form-check-label" for="">
+                          In Stock(1)
+                        </label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id=""
+                        />
+                        <label className="form-check-label" for="">
+                          Out of Stock(0)
+                        </label>
+                      </div>
+                    </div>
+                    <h5 className="subtitle">Price</h5>
+                    <div>
+                      <div className="mb-3 flex gap-2">
+                        <div>
+                          <input
+                            type="text"
+                            id="form-control"
+                            placeholder="From"
+                            className="py-4"
+                          />
+                          <label hthmFor="form-control">From</label>
+                        </div>
+                        <div>
+                          <input
+                            type="text"
+                            id="form-control"
+                            placeholder="To"
+                            className="py-4"
+                          />
+                          <label hthmFor="form-control">To</label>
+                        </div>
+                      </div>
+                    </div>
+                    <h5 className="subtitle">Colors</h5>
+                    <div className="">
+                      <Color />
+                    </div>
+                    <h5 className="subtitle">Size</h5>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="color-1"
+                        // placeholder="From"
+                        // className="py-4"
+                      />
+                      <label htmlFor="color-1"> S(2)</label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id="color-2"
+                        // placeholder="From"
+                        // className="py-4"
+                      />
+                      <label htmlFor="color-2"> M(2)</label>
+                    </div>
+                  </div>
+                </div>
+                <div className="filter-card mb-3">
+                  <h3 className="filter-title">Product Tag</h3>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-4">
+                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
+                        headphone
+                      </span>
+                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
+                        Laptop
+                      </span>
+                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
+                        Mobile
+                      </span>
+                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
+                        headphone
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="filter-card mb-3">
+                  <h3 className="filter-title">Random Product</h3>
+                  <div className="flex flex-col">
+                    <div className="flex gap-4 font-bold text-15">
+                      <div className="w-[150px] h-[150px] ">
+                        <img
+                          src={famous}
+                          alt="random"
+                          className="w-full h-full"
+                        />
+                      </div>
+                      <div className="w-[150px]">
+                        <h5>
+                          Kids headphones bulk 10 pack adults color for students
+                        </h5>
+                        <ReactStars
+                          count={5}
+                          size={30}
+                          value="3"
+                          edit={false}
+                          activeColor="#ffd700"
+                        />
+                        <b>$500</b>
+                      </div>
+                    </div>
+                    <div className="flex gap-4 font-bold text-15">
+                      <div className="w-[150px] h-[150px] ">
+                        <img
+                          src={famous}
+                          alt="random"
+                          className="w-full h-full"
+                        />
+                      </div>
+                      <div className="w-[150px]">
+                        <h5>
+                          Kids headphones bulk 10 pack adults color for students
+                        </h5>
+                        <ReactStars
+                          count={5}
+                          size={30}
+                          value="3"
+                          edit={false}
+                          activeColor="#ffd700"
+                        />
+                        <b>$500</b>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="filter-sort-grid">
+              <div className="">
+                <div className="flex justify-between flex-1">
+                  <div className="flex">
+                    <p className="font-bold text-xl">Sort By</p>
+                    <div className=" mb-4">
+                      <select name="" id="" className="p-4 border">
+                        <option name="" value="manual">
+                          Featured
+                        </option>
+                        <option name="" value="best-selling ">
+                          Best Selling
+                        </option>
+                        <option name="" value="title-ascending">
+                          Alphabtically A-Z
+                        </option>
+                        <option name="" value="title-descending">
+                          Alphabtically Z-A
+                        </option>
+                        <option name="" value="price-ascending">
+                          Price. low to high
+                        </option>
+                        <option name="" value="price-descending">
+                          Price. high to low
+                        </option>
+                        <option name="" value="created-ascending">
+                          Date. new to old
+                        </option>
+                        <option name="" value="created-descending">
+                          Date. old to new
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <p className="total-product text-xl font-bold">
+                      21 Products
+                    </p>
+                    <div className="flex gap-4">
+                      <div
+                        onClick={() => setGrid(3)}
+                        className="cursor-pointer"
+                      >
+                        <FaHamburger />
+                      </div>
+                      <div
+                        onClick={() => setGrid(4)}
+                        className="cursor-pointer"
+                      >
+                        <FaHamsa />
+                      </div>
+                      <div
+                        onClick={() => setGrid(6)}
+                        className="cursor-pointer"
+                      >
+                        <FaHamburger />
+                      </div>
+                      <div
+                        onClick={() => setGrid(12)}
+                        className="cursor-pointer"
+                      >
+                        <FaHamsa />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="product-list mb-5">
+                  <div className="flex gap-4 flex-wrap">
+                    <ProductCard grid={grid} />
+                  </div>
+                  {/* taken d grid from ProductCard*/}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default OurStore;
