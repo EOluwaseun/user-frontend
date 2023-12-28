@@ -8,7 +8,6 @@ function Blog() {
     <div>
       <Meta title={'Blog'} />
       <BreadCrum title="Blog" />
-
       <div className="store-wrapper py-4 ">
         <div className="container">
           <div className="flex gap-4">

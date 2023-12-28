@@ -21,8 +21,18 @@ a {
   text-decoration: none;
   display: inline-block;
 }
+.btn {
+  background-color: var(--color-131921);
+  color: white;
+  font-size: 14px;
+  padding: 13px 33px;
+  border-radius: 15px;
+}
+.btn:hover {
+  background-color: var(--color-febd69);
+}
 button {
-  background-color: var(--color-232f3e);
+  background-color: var(--color-131921);
   color: white;
   font-size: 14px;
   padding: 13px 33px;

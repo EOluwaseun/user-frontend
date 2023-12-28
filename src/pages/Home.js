@@ -1,6 +1,6 @@
 import React from 'react';
 import banner from '../assets/images/banner1.jpg';
-import avater from '../assets/images/avatar8.png';
+import avater from '../assets/images/avatar.png';
 import famous from '../assets/images/famous.jpg';
 import Marquee from 'react-fast-marquee';
 import { Link } from 'react-router-dom';
