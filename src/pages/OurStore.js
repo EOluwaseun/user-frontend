@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BreadCrum from '../Component/BreadCrum';
 import Meta from '../Component/Meta';
 import ReactStars from 'react-rating-stars-component';
@@ -6,15 +6,27 @@ import famous from '../assets/images/famous.jpg';
 import { FaHamburger, FaHamsa } from 'react-icons/fa';
 import ProductCard from '../Component/ProductCard';
 import Color from '../Component/Color';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllProducts } from '../features/products/productSlice';
 
 function OurStore() {
   const [grid, setGrid] = useState(4);
-  // alert(grid);
+  const productState = useSelector((state) => state.product.product);
+  // console.log(productState);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  const getProducts = () => {
+    dispatch(getAllProducts());
+  };
+
   return (
     <>
       <Meta title="Our Store" />
       <BreadCrum title="Our Store" />
-      <div className="store-wrapper py-4 ">
+      <div className="store-wrapper py-4">
         <div className="container">
           <div className="flex gap-4">
             <div className="flex items-center">
@@ -245,7 +257,10 @@ function OurStore() {
 
                 <div className="product-list mb-5">
                   <div className="flex gap-4 flex-wrap">
-                    <ProductCard grid={grid} />
+                    <ProductCard
+                      data={productState ? productState : []}
+                      grid={grid}
+                    />
                   </div>
                   {/* taken d grid from ProductCard*/}
                 </div>

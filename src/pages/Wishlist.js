@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Meta from '../Component/Meta';
 import BreadCrum from '../Component/BreadCrum';
 import addidas from '../assets/images/trainer.jpg';
 import { GiCancel } from 'react-icons/gi';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProductWhislist } from '../features/users/userSlice';
 
 function Wishlist() {
+  const dispatch = useDispatch();
+
+  // once this page loads, it dispatch d wishlist to the user auth
+
+  useEffect(() => {
+    getProductWhislistFromdb();
+  }, []);
+
+  const getProductWhislistFromdb = () => {
+    dispatch(getProductWhislist());
+  };
+
+  // get d wishlist from user auth
+  const wishlistState = useSelector((state) => state.auth.wishlist.whishlist);
+  console.log(wishlistState);
   return (
     <div>
       <Meta title={'Wishlist'} />
