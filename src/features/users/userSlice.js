@@ -1,8 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from './userService';
 
+const getCustomerFromLocalStorage = localStorage.getItem('customer')
+  ? JSON.parse(localStorage.getItem('customer'))
+  : null;
+
 const initialState = {
-  user: '',
+  user: getCustomerFromLocalStorage,
   isError: false,
   isLoading: false,
   isSuccess: false,
@@ -26,6 +30,17 @@ export const loginUser = createAsyncThunk(
   async (userData, thunkApi) => {
     try {
       return await authService.login(userData);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error);
+    }
+  }
+);
+
+export const getProductWhislist = createAsyncThunk(
+  'user/wishlist', // the auth then d api url
+  async (thunkApi) => {
+    try {
+      return await authService.getUserwishList();
     } catch (error) {
       return thunkApi.rejectWithValue(error);
     }
@@ -67,22 +82,29 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.user = action.payload;
-        // state.message = 'success';
-        if (state.isSuccess === true) {
-          // take token from redux
-          localStorage.setItem('token', action.payload.token);
-          alert('user logged in succesfully');
-        }
+        state.customer = action.payload;
+        state.message = 'success';
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error;
-        if (state.isError === true) {
-          alert('something went wrong');
-        }
+      })
+      .addCase(getProductWhislist.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductWhislist.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.wishlist = action.payload;
+      })
+      .addCase(getProductWhislist.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error;
       });
   },
 });
