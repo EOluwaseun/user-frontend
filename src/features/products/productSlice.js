@@ -1,11 +1,22 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import { productService } from './productService';
 
 export const getAllProducts = createAsyncThunk(
-  'product/get-product',
-  async (thunkAPI) => {
+  'product/get',
+  async (data, thunkAPI) => {
     try {
-      return await productService.getProducts();
+      return await productService.getProducts(data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const getAProduct = createAsyncThunk(
+  'product/getaproduct',
+  async (id, thunkAPI) => {
+    try {
+      return await productService.getSingleProduct(id);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -22,6 +33,18 @@ export const addTowishlist = createAsyncThunk(
     }
   }
 );
+
+export const userRatings = createAsyncThunk(
+  'product/rating',
+  async (data, thunkAPI) => {
+    try {
+      return await productService.addRating(data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+export const resetState = createAction('Reset_all');
 
 const productState = {
   product: '',
@@ -67,7 +90,43 @@ export const productSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
         state.message = action.error;
-      });
+      })
+      .addCase(getAProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.singleProduct = action.payload;
+        state.message = 'product fetched succefully';
+      })
+      .addCase(getAProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error;
+      })
+      .addCase(userRatings.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(userRatings.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.ratingadded = action.payload;
+        state.message = 'rating added succefully';
+        if (state.isSuccess) {
+          alert('rating added successfully');
+        }
+      })
+      .addCase(userRatings.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.error;
+      })
+      .addCase(resetState, () => productState);
   },
 });
 export default productSlice.reducer;

@@ -1,17 +1,43 @@
-import React from 'react';
+/* eslint-disable array-callback-return */
+import React, { useEffect } from 'react';
 import banner from '../assets/images/banner1.jpg';
+// import banner2 from '../assets/images/banner2.jpg';
 import avater from '../assets/images/avatar.png';
 import famous from '../assets/images/famous.jpg';
 import Marquee from 'react-fast-marquee';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import BlogCard from '../Component/BlogCard';
 import ProductCard from '../Component/ProductCard';
 import SpecialProduct from '../Component/SpecialProduct';
 import Container from '../Component/Container';
 import { services } from '../ustils/data';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  addTowishlist,
+  getAllProducts,
+  resetState,
+} from '../features/products/productSlice';
+import ReactStars from 'react-rating-stars-component';
+import { BiSearch } from 'react-icons/bi';
+import { FcLike } from 'react-icons/fc';
+import addidas from '../assets/images/addidas2.webp';
+import addidasLogo from '../assets/images/addiLogo.webp';
 
 //react helmet
 function Home() {
+  const productState = useSelector((state) => state?.product?.product);
+  const navigate = useNavigate();
+  // console.log(productState);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getProducts();
+  });
+
+  const getProducts = () => {
+    dispatch(getAllProducts());
+  };
+
   return (
     <>
       <Container class1="py-5">
@@ -194,10 +220,66 @@ function Home() {
           <div>
             <h3 className="section-heading text-center">Featured Collection</h3>
             <div className="flex justify-between items-center gap-4">
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
+              {productState &&
+                productState?.map((item, index) => {
+                  if (item?.tags === 'featured') {
+                    return (
+                      <div key={index} className={'grid-cols-2'}>
+                        <div className="product-card relative">
+                          <div
+                            className="wishlist-icon absolute"
+                            onClick={(e) => addTowishlist(item?._id)}
+                          >
+                            <FcLike />
+                          </div>
+                          <div className="product-image">
+                            <img src={addidas} alt="alt-img" />
+                            <img src={addidasLogo} alt="alt-img" />
+                          </div>
+                          <div className="product-details ">
+                            <h6 className="brand">{item?.brand}</h6>
+                            <h5 className="product-title">{item?.title}</h5>
+                            <ReactStars
+                              count={5}
+                              size={30}
+                              value={item?.ratings.toString()}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                            <p
+                              // className={`${grid === 12 ? 'block' : 'hidden'}`}
+                              dangerouslySetInnerHTML={{
+                                __html: item?.description,
+                              }}
+                            ></p>
+                            <p className="price">${item?.price}</p>
+                          </div>
+                          <div className="action-bar absolute top-[20%] right-[-25px] bg-white p-2">
+                            <div className="flex flex-col gap-2 items-center">
+                              <button>
+                                <BiSearch />
+                              </button>
+                              <button>
+                                <BiSearch />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  // navigate('/product/' + item?._id)
+                                  navigate(`/product/${item?._id}`)
+                                }
+                              >
+                                <BiSearch />
+                              </button>
+                              <button>
+                                <BiSearch />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                })}
             </div>
           </div>
         </div>
@@ -247,9 +329,23 @@ function Home() {
             <h3 className="section">Special Product</h3>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <SpecialProduct />
-            <SpecialProduct />
-            <SpecialProduct />
+            {productState &&
+              productState?.map((item, index) => {
+                if (item?.tags === 'special') {
+                  return (
+                    <SpecialProduct
+                      key={index}
+                      id={item?._id}
+                      title={item?.title}
+                      totalsrating={item?.totalsrating.toString()}
+                      price={item?.price}
+                      brand={item?.brand}
+                      sold={item?.sold}
+                      quantity={item?.quantity}
+                    />
+                  );
+                }
+              })}
           </div>
         </div>
       </Container>
@@ -258,10 +354,65 @@ function Home() {
           <div>
             <h3 className="section-heading text-center">Popular Product</h3>
             <div className="flex justify-between items-center">
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
+              {productState &&
+                productState?.map((item, index) => {
+                  if (item?.tags === 'popular') {
+                    return (
+                      <div key={index} className={'grid-cols-2'}>
+                        <div className="product-card relative">
+                          <div
+                            className="wishlist-icon absolute"
+                            onClick={(e) => addTowishlist(item?._id)}
+                          >
+                            <FcLike />
+                          </div>
+                          <div className="product-image">
+                            <img src={addidas} alt="alt-img" />
+                            <img src={addidasLogo} alt="alt-img" />
+                          </div>
+                          <div className="product-details ">
+                            <h6 className="brand">{item?.brand}</h6>
+                            <h5 className="product-title">{item?.title}</h5>
+                            <ReactStars
+                              count={5}
+                              size={30}
+                              value={item?.ratings.toString()}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                            <p
+                              // className={`${grid === 12 ? 'block' : 'hidden'}`}
+                              dangerouslySetInnerHTML={{
+                                __html: item?.description,
+                              }}
+                            ></p>
+                            <p className="price">${item?.price}</p>
+                          </div>
+                          <div className="action-bar absolute top-[20%] right-[-25px] bg-white p-2">
+                            <div className="flex flex-col gap-2 items-center">
+                              <button>
+                                <BiSearch />
+                              </button>
+                              <button>
+                                <BiSearch />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  navigate('/product/' + item?._id)
+                                }
+                              >
+                                <BiSearch />
+                              </button>
+                              <button>
+                                <BiSearch />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                })}
             </div>
           </div>
         </div>

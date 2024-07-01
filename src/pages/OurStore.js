@@ -10,18 +10,59 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllProducts } from '../features/products/productSlice';
 
 function OurStore() {
-  const [grid, setGrid] = useState(4);
-  const productState = useSelector((state) => state.product.product);
-  // console.log(productState);
   const dispatch = useDispatch();
+  const [grid, setGrid] = useState(4);
+  const productState = useSelector((state) => state?.product?.product);
+  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  //filtering state
+  const [category, setCategory] = useState(null);
+  const [tag, setTag] = useState(null);
+  const [brand, setBrand] = useState(null);
+  const [maxPrice, setMaxPrice] = useState(null);
+  const [minPrice, setMinPrice] = useState(null);
+  const [sort, setSort] = useState(null);
+
+  // filtering
+  useEffect(() => {
+    let newBrand = [];
+    let newCategory = [];
+    let newTag = [];
+    let newColor = [];
+    for (let index = 0; index < productState?.length; index++) {
+      const element = productState[index]; //this will remove duplicates
+      // newBrand.push({ brand: element?.brand });
+      newBrand.push(element?.brand);
+      newCategory.push(element?.category);
+      newTag.push(element?.tags);
+      newColor.push(element?.color);
+    }
+    setBrands(newBrand);
+    setCategories(newCategory);
+    setTags(newTag);
+    // setColors(newColor);
+  }, [productState]);
+
+  console.log( //this removes duplicate
+    [...new Set(brands)],
+    [...new Set(categories)],
+    [...new Set(tags)]
+  );
+
+  // console.log(brands); this does not remove duplicate
+
   useEffect(() => {
     getProducts();
-  }, []);
+  }, [sort, tag, brand, category, maxPrice, minPrice]);
 
   const getProducts = () => {
-    dispatch(getAllProducts());
+    dispatch(
+      getAllProducts({ sort, tag, brand, category, maxPrice, minPrice })
+    );
   };
-
+  // console.log(sort);
   return (
     <>
       <Meta title="Our Store" />
@@ -35,10 +76,14 @@ function OurStore() {
                   <h3 className="filter-title">Shop By Category</h3>
                   <div>
                     <ul>
-                      <li>Watch</li>
-                      <li>Tv</li>
-                      <li>Camera</li>
-                      <li>Laptop</li>
+                      {categories &&
+                        [...new Set(categories)].map((item, index) => {
+                          return (
+                            <li key={index} onClick={() => setCategory(item)}>
+                              {item}
+                            </li>
+                          );
+                        })}
                     </ul>
                   </div>
                 </div>
@@ -75,19 +120,21 @@ function OurStore() {
                       <div className="mb-3 flex gap-2">
                         <div>
                           <input
-                            type="text"
+                            type="number"
                             id="form-control"
                             placeholder="From"
                             className="py-4"
+                            onChange={(e) => setMinPrice(e.target.value)}
                           />
                           <label hthmFor="form-control">From</label>
                         </div>
                         <div>
                           <input
-                            type="text"
+                            type="number"
                             id="form-control"
                             placeholder="To"
                             className="py-4"
+                            onChange={(e) => setMaxPrice(e.target.value)}
                           />
                           <label hthmFor="form-control">To</label>
                         </div>
@@ -122,18 +169,37 @@ function OurStore() {
                   <h3 className="filter-title">Product Tag</h3>
                   <div>
                     <div className="flex flex-wrap items-center gap-4">
-                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
-                        headphone
-                      </span>
-                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
-                        Laptop
-                      </span>
-                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
-                        Mobile
-                      </span>
-                      <span className="rounded-lg py-2 px-3 bg-slate-400 text-black">
-                        headphone
-                      </span>
+                      {/* {tags &&
+                        [...new Set(tags)].map((item, index) => {
+                          return (
+                            <span
+                              className="rounded-lg py-2 px-3 bg-slate-400 text-black"
+                              key={index}
+                              onClick={() => setTag(item)}
+                            >
+                              {item}
+                            </span>
+                          );
+                        })} */}
+                    </div>
+                  </div>
+                </div>
+                <div className="filter-card mb-3">
+                  <h3 className="filter-title">Brands</h3>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-4">
+                      {/* {brands &&
+                        [...new Set(brands)].map((item, index) => {
+                          return (
+                            <span
+                              className="rounded-lg py-2 px-3 bg-slate-400 text-black"
+                              key={index}
+                              onClick={() => setBrand(item)}
+                            >
+                              {item}
+                            </span>
+                          );
+                        })} */}
                     </div>
                   </div>
                 </div>
@@ -177,6 +243,7 @@ function OurStore() {
                         <ReactStars
                           count={5}
                           size={30}
+                          sing
                           value="3"
                           edit={false}
                           activeColor="#ffd700"
@@ -194,29 +261,35 @@ function OurStore() {
                   <div className="flex">
                     <p className="font-bold text-xl">Sort By</p>
                     <div className=" mb-4">
-                      <select name="" id="" className="p-4 border">
-                        <option name="" value="manual">
+                      <select
+                        defaultValue={'manuals'}
+                        onChange={(e) => setSort(e.target.value)}
+                        name=""
+                        id=""
+                        className="p-4 border"
+                      >
+                        {/* <option name="" value="manual">
                           Featured
-                        </option>
-                        <option name="" value="best-selling ">
+                        </option> */}
+                        {/* <option name="" value="best-selling ">
                           Best Selling
-                        </option>
-                        <option name="" value="title-ascending">
+                        </option> */}
+                        <option name="" value="title">
                           Alphabtically A-Z
                         </option>
-                        <option name="" value="title-descending">
+                        <option name="" value="-title">
                           Alphabtically Z-A
                         </option>
-                        <option name="" value="price-ascending">
+                        <option name="" value="price">
                           Price. low to high
                         </option>
-                        <option name="" value="price-descending">
+                        <option name="" value="-price">
                           Price. high to low
                         </option>
-                        <option name="" value="created-ascending">
+                        <option name="" value="createdAt">
                           Date. new to old
                         </option>
-                        <option name="" value="created-descending">
+                        <option name="" value="-createdAt">
                           Date. old to new
                         </option>
                       </select>
