@@ -14,7 +14,7 @@ function ProductCard(props) {
 
   const location = useLocation();
   const addToWish = (id) => {
-    alert(id);
+    // alert(id);
     dispatch(addTowishlist(id));
   };
   return (
@@ -29,7 +29,7 @@ function ProductCard(props) {
                 : 'grid-cols-2'
             }`}
           >
-            <Link
+            <div
               // to={`${
               //   location.pathname === '/'
               //     ? '/product/:id'
@@ -73,7 +73,7 @@ function ProductCard(props) {
                   <Link>
                     <BiSearch />
                   </Link>
-                  <Link>
+                  <Link to={'/product/' + item?._id}>
                     <BiSearch />
                   </Link>
                   <Link>
@@ -81,7 +81,7 @@ function ProductCard(props) {
                   </Link>
                 </div>
               </div>
-            </Link>
+            </div>
           </div>
         );
       })}
