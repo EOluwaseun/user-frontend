@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Meta from '../Component/Meta';
 import BreadCrum from '../Component/BreadCrum';
 import BlogCard from '../Component/BlogCard';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllblogs } from '../features/blog/blogSlice';
 
 function Blog() {
+  // const blogState = useSelector((state) => state?.blog.blog);
+
+  // const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   getblogs();
+  // }, []);
+
+  // const getblogs = () => {
+  //   dispatch(getAllblogs());
+  // };
+
   return (
     <div>
-      <Meta title={'Blog'} />
+      {/* <Meta title={blogState?.title} /> */}
       <BreadCrum title="Blog" />
       <div className="store-wrapper py-4 ">
         <div className="container">
@@ -27,12 +41,22 @@ function Blog() {
               </div>
             </div>
             <div className="flex gap-10">
-              <div className="">
-                <BlogCard />
-              </div>
-              <div className="">
-                <BlogCard />
-              </div>
+              {/* {blogState?.map((item, index) => {
+                return (
+                  <div key={index} className="">
+                    <BlogCard
+                      id={item?._id}
+                      title={item?.title}
+                      description={item?.description}
+                      // date={moment(item?.createdAt).format(
+                      //   'MMMM DD YYYY, h:mm:ss a'
+                      // )}
+                      date={item?.createdAt}
+                      // image={item?.images[0]?.url}
+                    />
+                  </div>
+                );
+              })} */}
             </div>
           </div>
         </div>

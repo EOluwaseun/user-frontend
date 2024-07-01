@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Meta from '../Component/Meta';
 import BreadCrum from '../Component/BreadCrum';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import CustomInput from '../Component/CustomInput';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../features/users/userSlice';
 
 let loginSchema = Yup.object().shape({
@@ -17,6 +17,8 @@ let loginSchema = Yup.object().shape({
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const authState = useSelector((state) => state?.auth);
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -25,9 +27,22 @@ function Login() {
     validationSchema: loginSchema,
     onSubmit: (values) => {
       dispatch(loginUser(values));
-      alert(JSON.stringify(values, null, 2));
+      setTimeout(() => {
+        if (authState?.isSuccess) {
+          navigate('/');
+        }
+      }, 300);
     },
   });
+
+  // useEffect(() => {
+  //   if (authState?.isSuccess) {
+  //     navigate('/');
+  //   } else {
+  //     navigate('');
+  //   }
+  // });
+
   return (
     <div>
       <Meta title="Login" />
@@ -72,7 +87,9 @@ function Login() {
                   Forgot Password
                 </Link>
                 <div className="flex justify-center gap-4 items-center">
-                  <button type="submit bg-blue-500 border-0">Login</button>
+                  <button type="submit" className="bg-blue-500 border-0">
+                    Login
+                  </button>
                   <Link to="/register" className="btn bg-blue-500 text-white">
                     SignUp
                   </Link>

@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import BreadCrum from '../Component/BreadCrum';
 import Meta from '../Component/Meta';
 import addidas from '../assets/images/trainer.jpg';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAblog } from '../features/blog/blogSlice';
 // import { HiArrowLeft } from 'react-icons/hi';
 
 function SingleBlog() {
+  // const singleBlogState = useSelector((state) => state?.blog?.singleblog);
+  // const dispatch = useDispatch();
+
+  // const location = useLocation();
+  // const blogLocation = location.pathname().split('/')[2];
+  // console.log(singleBlogState);
+
+  // useEffect(() => {
+  //   getSingleBlog(blogLocation);
+  // }, []);
+
+  // const getSingleBlog = () => {
+  //   dispatch(getAblog());
+  // };
   return (
     <div>
       <Meta title={'Dynamic Blog Name'} />

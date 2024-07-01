@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { BiSearch } from 'react-icons/bi';
 import { BsBagCheck } from 'react-icons/bs';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserCart } from '../features/users/userSlice';
 
 function Header() {
+  const dispatch = useDispatch();
+  // const cartState = useSelector((state) => state?.auth?.cartProducts);
+  const cartState = useSelector((state) => state?.auth?.getProductCarts);
+  const authState = useSelector((state) => state?.auth);
+
+  const [total, setTotal] = useState(null);
+
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < cartState?.length; index++) {
+      sum = sum + Number(cartState[index]?.quantity) * cartState[index]?.price;
+      setTotal(sum);
+    }
+    setTimeout(() => {
+      dispatch(getUserCart());
+      //header recheck
+    }, 100);
+  }, [cartState, dispatch]);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
   return (
     <>
       <header className="header-top-strip py-3">
@@ -67,10 +92,14 @@ function Header() {
                   </Link>
                 </div>
                 <div>
-                  <Link to="/login">
+                  <Link to={authState?.user === null ? '/login' : 'my-profile'}>
                     <span className="text-white">
                       <BsBagCheck size={35} />
-                      <p className="text-center">Login</p>
+                      {authState?.user === null ? (
+                        <p className="text-center">Login</p>
+                      ) : (
+                        <p> welcome {authState?.user?.lastname}</p>
+                      )}
                     </span>
                   </Link>
                 </div>
@@ -82,8 +111,9 @@ function Header() {
 
                     <div className="">
                       <span className="bg-white text-black text-2xl rounded-sm text-center">
-                        0
+                        {cartState?.length ? cartState?.length : 0}
                       </span>
+                      <p className="mb-0 text-white">${total ? total : 0}</p>
                     </div>
                   </Link>
                 </div>
@@ -109,7 +139,7 @@ function Header() {
                       <Link className="adminList" to="">
                         Product
                       </Link>
-                      <Link className="adminList" to="">
+                      <Link to="my-order" className="adminList">
                         Orders
                       </Link>
                       <Link className="adminList" to="">
@@ -120,11 +150,18 @@ function Header() {
                 </ul>
               </div>
               <div className="menu-links">
-                <div className="flex items-start gap-5">
+                <div className="flex items-start gap-5 justify-center">
                   <NavLink to="/">Home</NavLink>
                   <NavLink to="/product">Our Store</NavLink>
                   <NavLink to="/blogs">Blogs</NavLink>
                   <NavLink to="/contact">Contact</NavLink>
+                  <button
+                    onClick={handleLogout}
+                    className="border border-0 bg-transparent text-white"
+                    type="button"
+                  >
+                    Logout
+                  </button>
                 </div>
               </div>
             </div>

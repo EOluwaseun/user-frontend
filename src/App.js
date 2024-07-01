@@ -21,6 +21,10 @@ import ShippingPolicy from './pages/ShippingPolicy';
 import SingleProduct from './pages/SingleProduct';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import { PrivateRoute } from './routing/PrivateRoute';
+import { OpenRoute } from './routing/OpenRoute';
+import Orders from './pages/Orders';
+import Profile from './pages/Profile';
 
 function App() {
   // eslint-disable-next-line react/jsx-no-comment-textnodes
@@ -35,15 +39,54 @@ function App() {
             <Route path="product" element={<Store />} />
             <Route path="product/:id" element={<SingleProduct />} />
             <Route path="blogs" element={<Blog />} />
-            <Route path="cart" element={<Cart />} />
-            <Route path="checkout" element={<Checkout />} />
+            <Route
+              path="cart"
+              element={<PrivateRoute>{<Cart />}</PrivateRoute>}
+            />
+            <Route
+              path="my-order"
+              element={<PrivateRoute>{<Orders />}</PrivateRoute>}
+            />
+            <Route
+              path="my-profile"
+              element={<PrivateRoute>{<Profile />}</PrivateRoute>}
+            />
+            <Route
+              path="checkout"
+              element={
+                <PrivateRoute>
+                  <Checkout />
+                </PrivateRoute>
+              }
+            />
             <Route path="blog/:id" element={<SingleBlog />} />
             <Route path="compare" element={<Compare />} />
-            <Route path="wishlist" element={<Wishlist />} />
-            <Route path="register" element={<Register />} />
-            <Route path="login" element={<Login />} />
+            <Route
+              path="wishlist"
+              element={
+                <PrivateRoute>
+                  <Wishlist />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="register"
+              element={
+                <OpenRoute>
+                  <Register />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="login"
+              element={
+                <OpenRoute>
+                  <Login />
+                </OpenRoute>
+              }
+            />
             <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="reset-password/:token" element={<ResetPassword />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="refund-policy" element={<RefundPolicy />} />
             <Route path="shopping-policy" element={<ShippingPolicy />} />
