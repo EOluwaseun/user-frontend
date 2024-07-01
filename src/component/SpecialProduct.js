@@ -1,10 +1,10 @@
 import React from 'react';
 import addidas from '../assets/images/trainer.jpg';
 import ReactStars from 'react-rating-stars-component';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export function ProgressDefault() {}
-function SpecialProduct() {
+function SpecialProduct(props) {
+  const { title, brand, sold, quantity, id, totalsrating, price } = props;
   return (
     <div className="">
       <div className="special-product-card rounded-md flex justify-between gap-4  bg-white">
@@ -13,7 +13,7 @@ function SpecialProduct() {
         </div>
         <div className="special-product-content">
           <h5 className="brand">Mavels</h5>
-          <h6 className="title">Trainers kit</h6>
+          <h6 className="title">{title}</h6>
           {/* ratings */}
           <ReactStars
             count={5}
@@ -44,16 +44,26 @@ function SpecialProduct() {
             </div>
           </div>
           <div className="my-2">
-            <b>Product:5</b>
+            <b>Product:{quantity}</b>
             <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 ">
-              <div
+              {/* <div
                 className="bg-green-600 h-2.5 rounded-full"
                 style={{ width: '50%' }}
+              ></div> */}
+              <div
+                className="bg-green-600 h-2.5 rounded-full"
+                role="progressbar"
+                style={{ width: quantity / quantity + sold * 100 + '%' }}
+                aria-valuenow={quantity / quantity + sold * 100}
+                aria-valuemin={quantity}
+                aria-valuemax={sold + quantity}
               ></div>
             </div>
           </div>
           <Link>
-            <button>Add to cart</button>
+            <Link to={'/product/' + id} className="link">
+              View
+            </Link>
           </Link>
         </div>
       </div>

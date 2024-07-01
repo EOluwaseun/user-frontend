@@ -5,11 +5,11 @@ import Footer from './Footer';
 
 function Layout() {
   return (
-    <>
+    <div className="">
       <Header />
       <Outlet />
       <Footer />
-    </>
+    </div>
   );
 }
 

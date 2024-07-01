@@ -1,21 +1,70 @@
-/* eslint-disable no-script-url */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable jsx-a11y/anchor-has-content */
-/* eslint-disable react/jsx-no-comment-textnodes */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BreadCrum from '../Component/BreadCrum';
 import Meta from '../Component/Meta';
 import ProductCard from '../Component/ProductCard';
 import Color from '../Component/Color';
 import ReactStars from 'react-rating-stars-component';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import addidas from '../assets/images/trainer.jpg';
 import { TbGitCompare } from 'react-icons/tb';
 import { AiOutlineHeart } from 'react-icons/ai';
 import Container from '../Component/Container';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  userRatings,
+  getAProduct,
+  getAllProducts,
+} from '../features/products/productSlice';
+import { addProdToCart, getUserCart } from '../features/users/userSlice';
 
-// react-image-zoom --save
 function SingleProduct() {
+  const [color, setColor] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [alreadyAdded, setAlreadyAdded] = useState(false);
+  const [popularProduct, setPopularProduct] = useState([]);
+
+  const location = useLocation();
+  const getProductId = location.pathname.split('/')[2];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const productState = useSelector((state) => state?.product?.singleProduct);
+  const productStates = useSelector((state) => state?.product?.product);
+  const cartState = useSelector((state) => state?.auth?.getCartProduct);
+  // console.log(productState);
+
+  useEffect(() => {
+    getASingleProduct();
+  });
+
+  const getASingleProduct = () => {
+    dispatch(getAProduct(getProductId));
+    dispatch(getUserCart());
+    dispatch(getAllProducts());
+  };
+
+  useEffect(() => {
+    for (let index = 0; index < cartState?.length; index++) {
+      if (getProductId === cartState[index]?.productId?._id) {
+        setAlreadyAdded(true);
+      }
+    }
+  }, []);
+  const uploadCart = () => {
+    if (color === null) {
+      alert('Please add color');
+      return false;
+    } else {
+      dispatch(
+        addProdToCart({
+          productId: productState?._id,
+          quantity,
+          color,
+          price: productState?.price,
+        })
+      );
+      navigate('/cart');
+    }
+  };
   const [orderProduct, setOrderProduct] = useState(true);
 
   const copyToClipboard = (text) => {
@@ -26,14 +75,49 @@ function SingleProduct() {
     document.execCommand('copy');
     textField.remove();
   };
+
+  useEffect(() => {
+    let data = [];
+    for (let index = 0; index < productStates.length; index++) {
+      const element = productStates[index];
+      if (element.tags === 'popular') {
+        data.push(element);
+      }
+      setPopularProduct(data);
+    }
+  }, [productStates]);
+  // console.log(popularProduct);-
+
+  const [star, setStar] = useState(null);
+  const [comment, setComment] = useState(null);
+
+  const addRatingProduct = () => {
+    if (star === null) {
+      alert('please add rating');
+
+      return false;
+    } else if (comment === null) {
+      alert('please add comment');
+      return false;
+    } else {
+      dispatch(
+        userRatings({ star: star, comment: comment, prodId: getProductId })
+      );
+      setTimeout(() => {
+        dispatch(getAProduct(getProductId));
+      }, 100);
+    }
+    return false;
+  };
+
   return (
     <div>
       <Meta title={'Product Name'} />
-      <BreadCrum title="Product Name" />
+      <BreadCrum title={productState?.title} />
       <div className="main-product-wrapper py-5 home-wrapper">
         <div className="">
           <div className="flex justify-between gap-4 container">
-            <div className="main-product-image ">
+            <div className="main-product-image">
               <img
                 src={addidas}
                 alt="single-product"
@@ -42,16 +126,14 @@ function SingleProduct() {
             </div>
             <div>
               <div className="main-product-details border-b-2">
-                <h3 className="font-bold mt-4">
-                  Kids Headphone Bulk 10 pack multi colored for student
-                </h3>
+                <h3 className="font-bold mt-4">{productState?.title}</h3>
                 <div className="border-b-2">
-                  <p className="price mt-4">$100</p>
+                  <p className="price mt-4">{productState?.price}</p>
                   <div className="flex items-center gap-4">
                     <ReactStars
                       count={5}
                       size={30}
-                      value={3}
+                      value={productState?.totalsrating}
                       edit={false}
                       activeColor="#ffd700"
                     />
@@ -64,17 +146,24 @@ function SingleProduct() {
                     <h3>Type:</h3> <p>Watch</p>
                   </div>
                   <div className="flex gap-2 items-center my-2">
-                    <h3>Brand:</h3> <p>Mavel</p>
+                    <h3>Brand:</h3> <p>{productState?.brand}</p>
                   </div>
                   <div className="flex gap-2 items-center my-2">
-                    <h3>Category:</h3> <p>Watch</p>
+                    <h3>Category:</h3> <p>{productState?.category}</p>
                   </div>
                   <div className="flex gap-2 items-center my-2">
                     <h3>Availability:</h3> <p>Stock</p>
                   </div>
                   <div className="flex gap-2 items-center my-2">
-                    <h3>Color:</h3>
-                    <Color />
+                    {alreadyAdded === false && (
+                      <>
+                        <h3>Color:</h3>
+                        <Color
+                          setColor={setColor}
+                          colorData={productState?.color}
+                        />
+                      </>
+                    )}
                   </div>
                   <div className="flex gap-2 items-center my-2">
                     <h3>Size:</h3>
@@ -86,19 +175,40 @@ function SingleProduct() {
                     </div>
                   </div>
                   <div className="flex gap-2 items-center my-2">
-                    <h3>Quantity:</h3>
-                    <div>
-                      <input
-                        type="number"
-                        min={1}
-                        max={10}
-                        style={{ width: '50px', border: '1px solid black' }}
-                        id=""
-                      />
-                    </div>
-                    <div className="flex justify-center gap-4 items-center">
-                      <button className="button border-0">Add to Cart</button>
-                      <button className="button border-0">Buy it now</button>
+                    {alreadyAdded === false && (
+                      <>
+                        <h3>Quantity:</h3>
+                        <div>
+                          <input
+                            type="number"
+                            min={1}
+                            max={10}
+                            style={{ width: '50px', border: '1px solid black' }}
+                            id=""
+                            onChange={(e) => setQuantity(e.target.value)}
+                            value={quantity}
+                          />
+                        </div>
+                      </>
+                    )}
+                    <div
+                      className={
+                        alreadyAdded
+                          ? `mx-0`
+                          : // eslint-disable-next-line no-useless-concat
+                            ` mx-5` + `flex justify-center gap-4 items-center`
+                      }
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          alreadyAdded ? navigate('/cart') : uploadCart();
+                        }}
+                        className="button border-0 btn"
+                      >
+                        {alreadyAdded ? 'Go to Cart' : 'Add to Cart'}
+                      </button>
+                      {/* <button className="button border-0">Buy it now</button> */}
                     </div>
                   </div>
                   <div className="">
@@ -140,11 +250,11 @@ function SingleProduct() {
               <div>
                 <div className="bg-white p-3">
                   <h4>description</h4>
-                  <p>
-                    loreremloreremloreremloreremloreremloreremloreremloreremlorerem
-                    location
-                    loreremloreremloreremloreremloreremloreremloreremloreremlorerem
-                  </p>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: productState?.description,
+                    }}
+                  ></p>
                 </div>
               </div>
             </div>
@@ -160,7 +270,7 @@ function SingleProduct() {
                       <ReactStars
                         count={5}
                         size={30}
-                        value={3}
+                        value={productState?.totalsrating}
                         edit={false}
                         activeColor="#ffd700"
                       />
@@ -179,45 +289,54 @@ function SingleProduct() {
                 <div className="review-form">
                   <h4>Write a review</h4>
 
-                  <form action="" className="flex flex-col gap-15">
+                  <div className="flex flex-col gap-15">
                     <ReactStars
                       count={5}
                       size={30}
-                      value={3}
+                      value={productState?.totalsrating}
                       edit={true}
                       activeColor="#ffd700"
+                      // onChange={(e) => console.log(e)}
+                      onChange={(e) => setStar(e)}
                     />
-
                     <div>
                       <textarea
                         type="text"
                         placeholder="comment"
+                        onChange={(e) => setComment(e.target.value)}
                         className="w-full h-[150px] border-2 border-black"
                       ></textarea>
                     </div>
                     <div className="flex justify-end">
-                      <button className="button border">Submit</button>
+                      <button
+                        onClick={addRatingProduct}
+                        type="button"
+                        className="button border bg-yellow-400"
+                      >
+                        Submit
+                      </button>
                     </div>
-                  </form>
+                  </div>
                 </div>
                 <div className="reviews mt-4">
-                  <div className="review">
-                    <div className="flex gap-2 items-center">
-                      <h5>Sean</h5>
-                      <ReactStars
-                        count={5}
-                        size={30}
-                        value={3}
-                        edit={false}
-                        activeColor="#ffd700"
-                      />
-                    </div>
-
-                    <p className="">
-                      loreremloreremloreremloreremloreremloreremloreremloreremlorerem
-                      loreremloreremloreremloreremloreremloreremloreremloreremlorerem
-                    </p>
-                  </div>
+                  {productState &&
+                    productState?.ratings?.map((item, index) => {
+                      return (
+                        <div key={index} className="review">
+                          <div className="flex gap-2 items-center">
+                            <h5>Sean</h5>
+                            <ReactStars
+                              count={5}
+                              size={30}
+                              value={item?.star}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                          </div>
+                          <p className="">{item?.comment}</p>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </div>
@@ -227,7 +346,7 @@ function SingleProduct() {
               <div>
                 <h3 className="section-heading text-center">Popular Product</h3>
                 <div className="flex justify-between items-center">
-                  <ProductCard />
+                  <ProductCard data={popularProduct} />
                 </div>
               </div>
             </div>

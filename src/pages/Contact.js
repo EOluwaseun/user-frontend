@@ -5,8 +5,48 @@ import Meta from '../Component/Meta';
 import BreadCrum from '../Component/BreadCrum';
 import { AiOutlineHome, AiOutlineMail } from 'react-icons/ai';
 import { BiPhoneCall } from 'react-icons/bi';
+import * as yup from 'yup';
+import { useFormik } from 'formik';
+import { useDispatch } from 'react-redux';
+import { createEnquiry } from '../features/contact/contactSlice';
+
+const contactSchma = yup.object({
+  name: yup.string().required('Name is required'),
+  email: yup
+    .string()
+    .nullable()
+    .email('Email should be valid')
+    .required('Email is required'),
+  mobile: yup
+    .string()
+    .default('')
+    .nullable()
+    .required('Mobile Number is required.'),
+  comment: yup.string().default('').nullable().required('Comment is required'),
+});
 
 function Contact() {
+  const dispatch = useDispatch();
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      mobile: '',
+      email: '',
+      comment: '',
+    },
+    validationSchema: contactSchma,
+    onSubmit: (values) => {
+      dispatch(
+        createEnquiry({
+          name: values.name,
+          mobile: values.mobile,
+          email: values.email,
+          comment: values.comment,
+        })
+      );
+    },
+  });
+
   return (
     <>
       <Meta title="Contact" />
@@ -29,37 +69,68 @@ function Contact() {
             <div className="contact-wrapper flex justify-between">
               <div>
                 <h3 className="contact-title text-4xl font-bold">Contact</h3>
-                <form action="" className="flex flex-col gap-15">
+                <form
+                  onSubmit={formik.handleSubmit}
+                  action=""
+                  className="flex flex-col gap-15"
+                >
                   <div>
                     <input
                       type="text"
                       placeholder="name"
+                      onChange={formik.handleChange('name')}
+                      onBlur={formik.handleBlur('name')}
+                      value={formik.values.name}
                       className="form-control p-4 border-2 border-black w-full mb-4"
                     />
+                    <div className="text-red-500 mb-2">
+                      {formik.touched.name && formik.errors.name}
+                    </div>
                   </div>
                   <div>
                     <input
                       type="email"
                       placeholder="email"
+                      onChange={formik.handleChange('email')}
+                      onBlur={formik.handleBlur('email')}
+                      value={formik.values.email}
                       className="form-control p-4 border-2 border-black w-full mb-4"
                     />
+                    <div className="text-red-500 mb-2">
+                      {formik.touched.email && formik.errors.email}
+                    </div>
                   </div>
                   <div>
                     <input
                       type="tel"
                       placeholder="mobile"
+                      onChange={formik.handleChange('mobile')}
+                      onBlur={formik.handleBlur('mobile')}
+                      value={formik.values.mobile}
                       className="form-control p-4 border-2 border-black w-full mb-4"
                     />
+                    <div className="text-red-500 mb-2">
+                      {formik.touched.mobile && formik.errors.mobile}
+                    </div>
                   </div>
                   <div>
                     <textarea
                       type="text"
                       placeholder="comment"
+                      onChange={formik.handleChange('comment')}
+                      onBlur={formik.handleBlur('comment')}
+                      value={formik.values.comment}
                       className="w-full h-[150px] border-2 border-black"
                     ></textarea>
+
+                    <div className="text-red-500 mb-2">
+                      {formik.touched.comment && formik.errors.comment}
+                    </div>
                   </div>
                   <div>
-                    <button className="button border">Submit</button>
+                    <button type="submit" className="button border">
+                      Submit
+                    </button>
                   </div>
                 </form>
               </div>
